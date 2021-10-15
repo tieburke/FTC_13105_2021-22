@@ -37,6 +37,8 @@ public class Gyro {
     public double resetGyro(){
         resetAngle = getAngle();
         minusAngle = resetAngle*0.9;
+        resetAngle = resetAngle - minusAngle;
+        return resetAngle;
     }
 
 }
