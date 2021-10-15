@@ -14,6 +14,9 @@ public class Gyro {
     private BNO055IMU imu;
     private BNO055IMU.Parameters parameters;
 
+    private double resetAngle;
+    private double minusAngle;
+
     Orientation angle;
 
     public Gyro(BNO055IMU imu) {
@@ -32,7 +35,8 @@ public class Gyro {
         return angle.firstAngle;
     }
     public double resetGyro(){
-
+        resetAngle = getAngle();
+        minusAngle = resetAngle*0.9;
     }
 
 }
