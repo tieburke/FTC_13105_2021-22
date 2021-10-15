@@ -5,17 +5,18 @@ import org.firstinspires.ftc.robotcontroller.RobotClasses.Misc.Vector2D;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.Range;
 
-public class DriveTrain {
+public class TankDrive {
     private DcMotor frontRight;
     private DcMotor frontLeft;
     private DcMotor backRight;
     private DcMotor backLeft;
 
+    public double x;
     private double maxSpeedCap;
     private double speedMultiplier;
     private Gyro gyro;
 
-    public void MecanumDrive(DcMotor frontRight, DcMotor frontLeft, DcMotor backRight, DcMotor backLeft, Gyro gyro) {
+    public void TankDrive(DcMotor frontRight, DcMotor frontLeft, DcMotor backRight, DcMotor backLeft, Gyro gyro) {
         this.frontRight = frontRight;
         this.frontLeft = frontLeft;
         this.backRight = backRight;
@@ -31,25 +32,19 @@ public class DriveTrain {
      * Control the mecanum drivetrain using forward, strafe, and turn parameters
      *
      * @param forward move forward (positive value) or backward (negative value)
-     * @param strafe  move right (positive) or left (negative)
+     * @param //strafe  move right (positive) or left (negative)
      * @param turn    turn clock-wise (positive) or counter-clockwise (negative)
      */
-    public void drive(double forward, double strafe, double turn, boolean isFieldOriented) {
+
+    public void drive(double forward, double turn, boolean isFieldOriented) {
         double frontLeftPower, backLeftPower, frontRightPower, backRightPower;
 
         double y = -forward;
-        double x = strafe;
+        //double x = strafe;
         double rx = turn;
 
         // Field oriented math
         if (isFieldOriented) {
-
-           /* Old field oriented code
-           double angle = Math.toRadians(gyro.getAngle());
-           double temp = y * Math.cos(angle) + x * Math.sin(angle);
-           x = y * Math.sin(angle) + -x * Math.cos(angle);
-           y = temp;
-            */
             Vector2D input = new Vector2D(x, y);
             input.rotate(-gyro.getAngle());
 
@@ -60,14 +55,19 @@ public class DriveTrain {
         } else {
 
             y = -forward; // this is reversed
-            x = strafe;
+            //x = strafe;
             rx = turn;
 
+            //frontLeftPower = y + x - rx;
+            //backLeftPower = y - x + rx;
+            //frontRightPower = y - x - rx;
+            //backRightPower = y + x - rx;
+
             // Set motor power
-            frontLeftPower = y + x - rx;
-            backLeftPower = y - x + rx;
-            frontRightPower = y - x - rx;
-            backRightPower = y + x - rx;
+            frontLeftPower = y - rx;
+            backLeftPower = y + rx;
+            frontRightPower = y - rx;
+            backRightPower = y - rx;
 
         }
 
@@ -93,11 +93,11 @@ public class DriveTrain {
         frontRight.setPower(frontRightPower * speedMultiplier);
         backRight.setPower(backRightPower * speedMultiplier);
     }
-
+/*
     public void drive(double forward, double strafe, double turn) {
         drive(forward, strafe, turn, true);
     }
-
+*/
     /**
      * Cap the power given to the drivetrain
      *
@@ -121,12 +121,12 @@ public class DriveTrain {
         }
         speedMultiplier = Range.clip(Math.abs(multiplier), 0, 1);
     }
-
-    public void driveStraight(double forward, double strafe) {
+/*
+    public void driveStraight(double forward, double turn) {
         double setpoint = gyro.getAngle();
         double offset = setpoint - (gyro.getAngle() * .08);
 
-        drive(forward, strafe, offset);
-
-    }
+        drive(forward, turn, offset);
+}
+*/
 }
