@@ -34,6 +34,7 @@ public class Gyro {
         angle = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
         return angle.firstAngle;
     }
+
     public double resetGyro(){
         resetAngle = getAngle();
         minusAngle = resetAngle*0.9;

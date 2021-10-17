@@ -1,22 +1,23 @@
 package org.firstinspires.ftc.robotcontroller.RobotClasses.Subsytems;
 
 import org.firstinspires.ftc.robotcontroller.RobotClasses.Misc.Vector2D;
-
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.Range;
+import org.firstinspires.ftc.robotcontroller.RobotClasses.Standard_Bot;
+import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorImplEx;
 
 public class TankDrive {
-    private DcMotor frontRight;
-    private DcMotor frontLeft;
-    private DcMotor backRight;
-    private DcMotor backLeft;
+    private static DcMotor frontRight;
+    private static DcMotor frontLeft;
+    private static DcMotor backRight;
+    private static DcMotor backLeft;
 
     public double x;
-    private double maxSpeedCap;
-    private double speedMultiplier;
     private Gyro gyro;
 
-    public void TankDrive(DcMotor frontRight, DcMotor frontLeft, DcMotor backRight, DcMotor backLeft, Gyro gyro) {
+    public void tankDrive(DcMotor frontRight, DcMotor frontLeft, DcMotor backRight, DcMotor backLeft, Gyro gyro) {
         this.frontRight = frontRight;
         this.frontLeft = frontLeft;
         this.backRight = backRight;
@@ -24,109 +25,77 @@ public class TankDrive {
 
         this.gyro = gyro;
 
-        maxSpeedCap = 1;
-        speedMultiplier = 1;
     }
 
-    /**
-     * Control the mecanum drivetrain using forward, strafe, and turn parameters
-     *
-     * @param forward move forward (positive value) or backward (negative value)
-     * @param //strafe  move right (positive) or left (negative)
-     * @param turn    turn clock-wise (positive) or counter-clockwise (negative)
-     */
 
-    public void drive(double forward, double turn, boolean isFieldOriented) {
-        double frontLeftPower, backLeftPower, frontRightPower, backRightPower;
 
-        double y = -forward;
-        //double x = strafe;
-        double rx = turn;
+    public static void drive(double straight, double power) {
+        int rightTarget;
+        int leftTarget;
 
-        // Field oriented math
-        if (isFieldOriented) {
-            Vector2D input = new Vector2D(x, y);
-            input.rotate(-gyro.getAngle());
+        frontLeft.setPower(power);
+        backLeft.setPower(power);
+        frontRight.setPower(power);
+        backRight.setPower(power);
 
-            frontLeftPower = input.getX() + input.getY() + rx;
-            frontRightPower = -input.getX() + input.getY() - rx;
-            backLeftPower = -input.getX() + input.getY() + rx;
-            backRightPower = input.getX() + input.getY() - rx;
-        } else {
+        leftTarget = frontLeft.getCurrentPosition() + (int) (straight * 33);
+        rightTarget = frontRight.getCurrentPosition() + (int) (straight * 33);
 
-            y = -forward; // this is reversed
-            //x = strafe;
-            rx = turn;
+        frontLeft.setTargetPosition(leftTarget);
+        backLeft.setTargetPosition(leftTarget);
+        frontRight.setTargetPosition(rightTarget);
+        backRight.setTargetPosition(rightTarget);
 
-            //frontLeftPower = y + x - rx;
-            //backLeftPower = y - x + rx;
-            //frontRightPower = y - x - rx;
-            //backRightPower = y + x - rx;
+        frontLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        backLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        frontRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        backRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
-            // Set motor power
-            frontLeftPower = y - rx;
-            backLeftPower = y + rx;
-            frontRightPower = y - rx;
-            backRightPower = y - rx;
+    }
 
+    public static void turn(double turn, double power) {
+        double frontLeftPower = 0;
+        double backLeftPower = 0;
+        double frontRightPower = 0;
+        double backRightPower = 0;
+        int rightTarget = 0;
+        int leftTarget = 0;
+
+        if (turn > 0){
+            frontLeftPower = power;
+            backLeftPower = power;
+            frontRightPower = -power;
+            backRightPower = -power;
+        }
+        else if (turn < 0){
+            frontLeftPower = -power;
+            backLeftPower = -power;
+            frontRightPower = power;
+            backRightPower = power;
+        }
+        else if (turn == 0){
+            frontLeftPower = power;
+            backLeftPower = power;
+            frontRightPower = power;
+            backRightPower = power;
         }
 
-        // if one of the powers is over 1 (or maxSpeedCap), divide them by the max so that all motor powers stay the same ratio
-        // (so that they're not over 1 or the maxSpeedCap)
-        if (Math.abs(frontLeftPower) > maxSpeedCap || Math.abs(backLeftPower) > maxSpeedCap ||
-                Math.abs(frontRightPower) > maxSpeedCap || Math.abs(backRightPower) > maxSpeedCap) {
-            // Find the largest power
-            double max;
-            max = Math.max(Math.abs(frontLeftPower), Math.abs(backLeftPower));
-            max = Math.max(Math.abs(frontRightPower), max);
-            max = Math.max(Math.abs(backRightPower), max);
+        frontLeft.setPower(frontLeftPower);
+        backLeft.setPower(backLeftPower);
+        frontRight.setPower(frontRightPower);
+        backRight.setPower(backRightPower);
 
-            // Divide everything by max
-            frontLeftPower /= max;
-            backLeftPower /= max;
-            frontRightPower /= max;
-            backRightPower /= max;
-        }
+        leftTarget = frontLeft.getCurrentPosition() + (int) (turn * 33);
+        rightTarget = frontRight.getCurrentPosition() + (int) (turn * 33);
 
-        frontLeft.setPower(frontLeftPower * speedMultiplier);
-        backLeft.setPower(backLeftPower * speedMultiplier);
-        frontRight.setPower(frontRightPower * speedMultiplier);
-        backRight.setPower(backRightPower * speedMultiplier);
-    }
-/*
-    public void drive(double forward, double strafe, double turn) {
-        drive(forward, strafe, turn, true);
-    }
-*/
-    /**
-     * Cap the power given to the drivetrain
-     *
-     * @param cap a double from 0 to 1
-     */
-    public void setSpeedCap(double cap) {
-        if (cap > 1) {
-            System.out.println("WARNING: Cannot set drivetrain speed cap over 1. Cap has been automatically set to 1");
-        }
-        maxSpeedCap = Range.clip(Math.abs(cap), 0, 1);
-    }
+        frontLeft.setTargetPosition(leftTarget);
+        backLeft.setTargetPosition(leftTarget);
+        frontRight.setTargetPosition(rightTarget);
+        backRight.setTargetPosition(rightTarget);
 
-    /**
-     * Multiply the speed of all the motors (this is applied after the speed cap is applied)
-     *
-     * @param multiplier a double from 0 to 1
-     */
-    public void setSpeedMultiplier(double multiplier) {
-        if (multiplier > 1) {
-            System.out.println("WARNING: Cannot set drivetrain speed multiplier over 1. Multiplier has been automatically set to 1");
-        }
-        speedMultiplier = Range.clip(Math.abs(multiplier), 0, 1);
+        frontLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        backLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        frontRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        backRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
     }
-/*
-    public void driveStraight(double forward, double turn) {
-        double setpoint = gyro.getAngle();
-        double offset = setpoint - (gyro.getAngle() * .08);
-
-        drive(forward, turn, offset);
-}
-*/
 }
