@@ -118,19 +118,13 @@ public class Vuforia_Localization {
             robotY = coordinates[1];
             robotAngle = Orientation.getOrientation(lastKnownLocation, AxesReference.EXTRINSIC, AxesOrder.XYZ, AngleUnit.DEGREES).thirdAngle;
 
-            // Send information about whether the target is visible, and where the robot is
-            telemetry.addData("Tracking " + target.getName(), listener.isVisible());
-            telemetry.addData("Last Known Location", formatMatrix(lastKnownLocation));
-            telemetry.addData("robotX", robotX);
-            telemetry.addData("robotY", robotY);
-
             if (Math.abs(targetY - robotY)>10 && listener.isVisible())
             gainY = Math.abs((targetY-robotY)/targetY);
             gainY = gainY + 0.75;
             speedY = Math.abs((targetY-robotY)/targetY)*0.15;
             correctionY = (targetY - robotY)*1.25;
             correctionY = correctionY/25.4;
-            TankDrive.drive(-correctionY, 0, speedY); //Correction Y needs to be negative because the camera is mounted off the back and the y-axis of the robot is opposite of that of the picture's
+            TankDrive.drive(-correctionY, speedY); //Correction Y needs to be negative because the camera is mounted off the back and the y-axis of the robot is opposite of that of the picture's
             gainY = 0;
             speedY = 0;
             correctionY = 0;

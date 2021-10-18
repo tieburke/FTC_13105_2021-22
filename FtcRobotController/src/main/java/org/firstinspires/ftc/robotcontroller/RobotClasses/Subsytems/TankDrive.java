@@ -58,8 +58,10 @@ public class TankDrive {
         double backLeftPower = 0;
         double frontRightPower = 0;
         double backRightPower = 0;
-        int rightTarget = 0;
-        int leftTarget = 0;
+        int rightTarget;
+        int leftTarget;
+
+        turn = turn*0.124;
 
         if (turn > 0){
             frontLeftPower = power;
