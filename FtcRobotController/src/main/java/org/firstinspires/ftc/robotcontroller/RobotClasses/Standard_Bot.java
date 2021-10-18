@@ -109,5 +109,5 @@ public class Standard_Bot {
         StdShooterMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         StdCartridgeMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
     }
-} //test
+}
 

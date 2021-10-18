@@ -33,18 +33,90 @@ public class Vuforia_Localization {
     private VuforiaTrackable target;
     private VuforiaTrackableDefaultListener listener;
 
-    private double targetX = 1;
-    private double targetY = -533;
-    private double targetAngle = 1;
-    private double correctionX = 0;
-    private double correctionY = 0;
-    private double correctionAngle = 0;
-    private double gainY = 0;
-    private double speedY = 0;
-    private double gainX = 0;
-    private double speedX = 0;
-    private double gainAngle = 0;
-    private double speedAngle = 0;
+    private String formatMatrix(OpenGLMatrix matrix)
+    {
+        return matrix.formatAsTransform();
+    }
+
+    private OpenGLMatrix lastKnownLocation;
+    private OpenGLMatrix phoneLocation;
+
+    private static final String VUFORIA_KEY = "Acy/Mw7/////AAABmVeoJmayA0LFsPI//25wXiAgKvF8A1IMKKPVnU/YmD2SLqIfVxja/iMw9FGXlbh6ipPCe1BFslVFQra+jdueadfzzLqYiH9I9BAz0gOjuhBQB3bxgRnHI4nFWwaaRd0BYN0MYlgXZCcLjL5YdP/dnk3ffrlMlf4U5IK/yJpsxw6Eum84uoiFq7gnyOAcdJR2zXpF86/e/L0iPQrloOtqspc5Pp4u1ra2e6Sa3fWhHbB2g4wC4nYgi980JBGxZdvL1tkVoMqmbvrylRwF4Jsm7NsDKLjkZRnGULl/xXSFJ9ry45RAEGxh745HQRiJ2/lNpdabZpXONPi5xMscczlGvUpgCNebeumlqXrA7swmEsGE";
+    private double robotX = 0;
+    private double robotY = 0;
+    private float robotAngle = 0;
+    BNO055IMU               imu;
+    Orientation             lastAngles = new Orientation();
+    double                  globalAngle;
+    final double            GAIN = 0.05;
+    private ElapsedTime     runtime = new ElapsedTime();
+
+    Standard_Bot robot = new Standard_Bot();   // Use a StandardBot's hardware
+
+    public void VuforiaOrient (double targetX, double targetY, double targetAngle) {
+        double correctionX = 0;
+        double correctionY = 0;
+        double correctionAngle = 0;
+        double gainY = 0;
+        double speedY = 0;
+        double gainX = 0;
+        double speedX = 0;
+        double gainAngle = 0;
+        double speedAngle = 0;
+        lastKnownLocation = createMatrix(0, 0, 0, 0, 0, 0);
+        visionTargets.activate();
+        OpenGLMatrix latestLocation = listener.getUpdatedRobotLocation();
+
+        if(latestLocation != null)
+            lastKnownLocation = latestLocation;
+
+        float[] coordinates = lastKnownLocation.getTranslation().getData();
+
+        robotX = coordinates[0];
+        robotY = coordinates[1];
+        robotAngle = Orientation.getOrientation(lastKnownLocation, AxesReference.EXTRINSIC, AxesOrder.XYZ, AngleUnit.DEGREES).thirdAngle;
+
+        if (Math.abs(targetY - robotY)>10 && listener.isVisible())
+            gainY = Math.abs((targetY-robotY)/targetY);
+        gainY = gainY + 0.75;
+        speedY = Math.abs((targetY-robotY)/targetY)*0.15;
+        correctionY = (targetY - robotY)*1.25;
+        correctionY = correctionY/25.4;
+        TankDrive.drive(-correctionY, speedY); //Correction Y needs to be negative because the camera is mounted off the back and the y-axis of the robot is opposite of that of the picture's
+        gainY = 0;
+        speedY = 0;
+        correctionY = 0;
+
+        if (Math.abs(targetX - robotX)>10 && listener.isVisible())
+            gainX = Math.abs((targetX-robotX)/targetX);
+        gainX = gainX + 1;
+        speedX = Math.abs((targetX-robotX)/targetX)*1.25;
+        correctionX = ((targetX - robotX)*1.25);
+        correctionX = (correctionX/25.4);
+        if (correctionX > 0) {
+            TankDrive.turn(-90, speedX);
+            TankDrive.drive(correctionX, speedX);
+            TankDrive.turn(90, speedX);
+        }
+        else if(correctionX < 0) {
+            TankDrive.turn(90, speedY);
+            TankDrive.drive(correctionX, speedX);
+            TankDrive.turn(-90, speedY);
+        }
+        gainX = 0;
+        speedX = 0;
+        correctionX = 0;
+
+        if (Math.abs(targetAngle - robotAngle)>10 && listener.isVisible())
+            gainAngle = Math.abs((targetAngle-robotAngle)/targetAngle);
+        gainAngle = gainAngle + 1;
+        speedAngle = Math.abs((targetAngle-robotAngle)/targetAngle)*1.25;
+        correctionAngle = ((targetAngle - robotAngle)*1.25);
+        TankDrive.turn(correctionAngle, speedAngle);
+        gainAngle = 0;
+        speedAngle = 0;
+        correctionAngle = 0;
+    }
 
     private void setupVuforia()
     {
@@ -82,89 +154,4 @@ public class Vuforia_Localization {
     }
 
     // Formats a matrix into a readable string
-    private String formatMatrix(OpenGLMatrix matrix)
-    {
-        return matrix.formatAsTransform();
-    }
-
-    private OpenGLMatrix lastKnownLocation;
-    private OpenGLMatrix phoneLocation;
-
-    private static final String VUFORIA_KEY = "Acy/Mw7/////AAABmVeoJmayA0LFsPI//25wXiAgKvF8A1IMKKPVnU/YmD2SLqIfVxja/iMw9FGXlbh6ipPCe1BFslVFQra+jdueadfzzLqYiH9I9BAz0gOjuhBQB3bxgRnHI4nFWwaaRd0BYN0MYlgXZCcLjL5YdP/dnk3ffrlMlf4U5IK/yJpsxw6Eum84uoiFq7gnyOAcdJR2zXpF86/e/L0iPQrloOtqspc5Pp4u1ra2e6Sa3fWhHbB2g4wC4nYgi980JBGxZdvL1tkVoMqmbvrylRwF4Jsm7NsDKLjkZRnGULl/xXSFJ9ry45RAEGxh745HQRiJ2/lNpdabZpXONPi5xMscczlGvUpgCNebeumlqXrA7swmEsGE";
-    private double robotX = 0;
-    private double robotY = 0;
-    private float robotAngle = 0;
-    BNO055IMU               imu;
-    Orientation             lastAngles = new Orientation();
-    double                  globalAngle;
-    final double            GAIN = 0.05;
-    private ElapsedTime     runtime = new ElapsedTime();
-
-    Standard_Bot robot = new Standard_Bot();   // Use a StandardBot's hardware
-
-
-    public void VuforiaOrient (double targetX, double targetY, double targetAngle)
-    {
-        lastKnownLocation = createMatrix(0, 0, 0, 0, 0, 0);
-        visionTargets.activate();
-        OpenGLMatrix latestLocation = listener.getUpdatedRobotLocation();
-
-        if(latestLocation != null)
-            lastKnownLocation = latestLocation;
-
-            float[] coordinates = lastKnownLocation.getTranslation().getData();
-
-            robotX = coordinates[0];
-            robotY = coordinates[1];
-            robotAngle = Orientation.getOrientation(lastKnownLocation, AxesReference.EXTRINSIC, AxesOrder.XYZ, AngleUnit.DEGREES).thirdAngle;
-
-            if (Math.abs(targetY - robotY)>10 && listener.isVisible())
-            gainY = Math.abs((targetY-robotY)/targetY);
-            gainY = gainY + 0.75;
-            speedY = Math.abs((targetY-robotY)/targetY)*0.15;
-            correctionY = (targetY - robotY)*1.25;
-            correctionY = correctionY/25.4;
-            TankDrive.drive(-correctionY, speedY); //Correction Y needs to be negative because the camera is mounted off the back and the y-axis of the robot is opposite of that of the picture's
-            gainY = 0;
-            speedY = 0;
-            correctionY = 0;
-
-            if (Math.abs(targetX - robotX)>10 && listener.isVisible())
-            gainX = Math.abs((targetX-robotX)/targetX);
-            gainX = gainX + 1;
-            speedX = Math.abs((targetX-robotX)/targetX)*1.25;
-            correctionX = ((targetX - robotX)*1.25);
-            correctionX = (correctionX/25.4);
-
-            TankDrive.drive();
-            telemetry.addData("gainX", gainX);
-            telemetry.addData("speedX", speedX);
-            telemetry.addData("correctionX", correctionX);
-            gainX = 0;
-            speedX = 0;
-            correctionX = 0;
-
-            if (Math.abs(targetAngle - robotAngle)>10 && listener.isVisible())
-            gainAngle = Math.abs((targetAngle-robotAngle)/targetAngle);
-            gainAngle = gainAngle + 1;
-            speedAngle = Math.abs((targetAngle-robotAngle)/targetAngle)*1.25;
-            correctionAngle = ((targetAngle - robotAngle)*1.25);
-            correctionAngle = (correctionAngle/25.4);
-            strafeDrive(-0.2, correctionAngle, correctionAngle, 5);
-            telemetry.addData("gainAngle", gainAngle);
-            telemetry.addData("speedAngle", speedAngle);
-            telemetry.addData("correctionAngle", correctionAngle);
-            gainAngle = 0;
-            speedAngle = 0;
-            correctionAngle = 0;
-
-            // Send telemetry and idle to let hardware catch up
-            telemetry.update();
-            idle();
-        }
-        rightFront.setPower(0);
-        leftFront.setPower(0);
-        leftRear.setPower(0);
-        rightRear.setPower(0);
-    }
 }
