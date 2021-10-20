@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.robotcontroller;
+package org.firstinspires.ftc.robotcontroller.ScrapCode;
 
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
@@ -279,10 +279,10 @@ public class Working_Vuforia extends LinearOpMode
     {
 
         robot.init(hardwareMap);
-        leftFront = (DcMotorImplEx)robot.StdLeftFront;
-        leftRear = (DcMotorImplEx)robot.StdLeftRear;
-        rightFront = (DcMotorImplEx)robot.StdRightFront;
-        rightRear = (DcMotorImplEx)robot.StdRightRear;
+//        leftFront = (DcMotorImplEx)robot.StdLeftFront;
+//        leftRear = (DcMotorImplEx)robot.StdLeftRear;
+//        rightFront = (DcMotorImplEx)robot.StdRightFront;
+//        rightRear = (DcMotorImplEx)robot.StdRightRear;
 
         BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
         parameters.mode                = BNO055IMU.SensorMode.IMU;
