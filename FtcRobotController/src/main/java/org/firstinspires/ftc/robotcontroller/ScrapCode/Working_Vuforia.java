@@ -1,3 +1,4 @@
+/*
 package org.firstinspires.ftc.robotcontroller.ScrapCode;
 
 import com.qualcomm.hardware.bosch.BNO055IMU;
@@ -164,13 +165,13 @@ public class Working_Vuforia extends LinearOpMode
                     (leftFront.isBusy() && rightFront.isBusy()))
             {
                 // Use the gyro if you are driving straight
-/*          if (Math.abs(leftInches - rightInches) < 0.1) {
+          if (Math.abs(leftInches - rightInches) < 0.1) {
             directionCorrection = getCorrection(leftInches < 0.0);
             leftFront.setVelocity (2400*(power + directionCorrection));
             leftRear.setVelocity (2400*(power + directionCorrection));
             rightFront.setVelocity (2400*(power - directionCorrection));
             rightRear.setVelocity (2400*(power - directionCorrection));
-}*/
+}
             }
             rightFront.setPower(0);
             leftFront.setPower(0);
@@ -385,3 +386,4 @@ public class Working_Vuforia extends LinearOpMode
         rightRear.setPower(0);
     }
 }
+ */
