@@ -9,29 +9,29 @@ import com.qualcomm.robotcore.hardware.DistanceSensor;
 
 public class Standard_Bot {
 
-    public DcMotor StdFrontRight   = null;
-    public DcMotor StdBackRight  = null;
-    public DcMotor StdFrontLeft   = null;
-    public DcMotor StdBackLeft = null;
-    public DcMotor StdIntakeMotor  = null;
-    public DcMotor StdCapperMotor = null;
-    public DcMotor StdCarouselMotor = null;
-    public DcMotor StdOuttakeMotor = null;
-    public Servo StdRotateCapperServo = null;
-    public Servo StdOuttakeServo = null;
+    public static DcMotor StdFrontRight   = null;
+    public static DcMotor StdBackRight  = null;
+    public static DcMotor StdFrontLeft   = null;
+    public static DcMotor StdBackLeft = null;
+    public static DcMotor StdIntakeMotor  = null;
+    public static DcMotor StdCapperMotor = null;
+    public static DcMotor StdCarouselMotor = null;
+    public static DcMotor StdOuttakeMotor = null;
+    public static Servo StdRotateCapperServo = null;
+    public static Servo StdOuttakeServo = null;
     //public DistanceSensor       StdDistanceSensor = null;
     //public Rev2mDistanceSensor  StdRevDistanceSensor = null;
 
     public static final double Capper_Start= 0;
     public static final double Outtake_Servo= 0;
 
-    HardwareMap hwMap =  null;
+    static HardwareMap hwMap =  null;
     private ElapsedTime period = new ElapsedTime();
 
     public Standard_Bot(){
 
     }
-    public void init(HardwareMap ahwMap) {
+    public static void InitHardware(HardwareMap ahwMap) {
         // Save reference to Hardware map
         hwMap = ahwMap;
 

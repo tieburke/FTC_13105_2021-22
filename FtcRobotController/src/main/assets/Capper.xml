@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<QCARConfig>
+<Tracking>
+<ModelTarget name="Capper" motionHint="static" trackingMode="default"/>
+
+</Tracking>
+
+<Assembly name="Cappers_assembly" assemblyId="74423029e96b4fb1888362b308e5ca61">
+<Part name="Capper" translation="0 0 0" rotation="AD: 0 0 1 0"/>
+<EntryPoint name="viewpoint_0000" translation="-6.83313e-06 0.0428073 0.254098" rotation="AD: 0.7415942887778837 1.791952643741081 -0.7941269632524814 162.174" trained="no">
+
+</EntryPoint>
+
+</Assembly>
+
+</QCARConfig>
