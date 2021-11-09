@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.RobotClasses;
+package org.firstinspires.ftc.teamcode.RobotClasses.Subsytems;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
