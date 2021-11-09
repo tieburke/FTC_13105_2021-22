@@ -1,17 +1,10 @@
-package org.firstinspires.ftc.robotcontroller.RobotClasses;
-
-import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
+package org.firstinspires.ftc.teamcode.RobotClasses;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
-import com.qualcomm.robotcore.util.Range;
 
-@TeleOp(name="Teleop", group="Teleop")
-@Disabled
-public class Teleop extends LinearOpMode {
+public class Standard_Bot {
 
     public static DcMotor StdFrontRight   = null;
     public static DcMotor StdBackRight  = null;
@@ -23,30 +16,21 @@ public class Teleop extends LinearOpMode {
     public static DcMotor StdOuttakeMotor = null;
     public static Servo StdRotateCapperServo = null;
     public static Servo StdOuttakeServo = null;
+    //public DistanceSensor       StdDistanceSensor = null;
+    //public Rev2mDistanceSensor  StdRevDistanceSensor = null;
+
     public static final double Capper_Start= 0;
     public static final double Outtake_Servo= 0;
-    // Declare OpMode members.
-    private ElapsedTime runtime = new ElapsedTime();
-    private DcMotor frontLeft = null;
-    private DcMotor backLeft = null;
-    private DcMotor frontRight = null;
-    private DcMotor backRight = null;
-    private DcMotor intakeMotor = null;
-    private DcMotor outtakeMotor = null;
-    private DcMotor carouselMotor = null;
-    private DcMotor capperMotor = null;
-
-    private Servo outtakeServo = null;
-    private Servo capperServo = null;
 
     static HardwareMap hwMap =  null;
+    private ElapsedTime period = new ElapsedTime();
 
-    @Override
-    public void runOpMode() {
-        telemetry.addData("Status", "Initialized");
-        telemetry.update();
-        waitForStart();
-        runtime.reset();
+    public Standard_Bot(){
+
+    }
+    public static void InitHardware(HardwareMap ahwMap) {
+        // Save reference to Hardware map
+        hwMap = ahwMap;
 
         // Define and Initialize Motors
         StdFrontLeft  = hwMap.get(DcMotor.class, "FrontLeft");
@@ -106,61 +90,6 @@ public class Teleop extends LinearOpMode {
         StdOuttakeMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         StdCarouselMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
-    while (opModeIsActive()) {
-
-            double leftPower;
-            double rightPower;
-
-            // POV Mode uses left stick to go forward, and right stick to turn.
-            double drive = -gamepad1.left_stick_y;
-            double turn  =  gamepad1.right_stick_x;
-            leftPower    = Range.clip(drive + turn, -1.0, 1.0) ;
-            rightPower   = Range.clip(drive - turn, -1.0, 1.0) ;
-
-            // Send calculated power to wheels
-            frontLeft.setPower(leftPower);
-            backLeft.setPower(leftPower);
-            frontRight.setPower(rightPower);
-            backRight.setPower(rightPower);
-
-        if (gamepad2.a){
-            intakeMotor.setPower(0.75);
-        }
-        if (gamepad2.b){
-            intakeMotor.setPower(-0.75);
-        }
-        if (gamepad2.y){
-            outtakeMotor.setPower(0.25);
-        }
-        if (gamepad2.x){
-            outtakeMotor.setPower(-0.25);
-        }
-        if (gamepad2.left_bumper){
-            capperMotor.setPower(0.5);
-        }
-        if (gamepad2.right_bumper){
-            capperMotor.setPower(-0.5);
-        }
-        if (gamepad1.a){
-            carouselMotor.setPower(0.75);
-        }
-        if (gamepad2.dpad_up){
-            outtakeServo.setPosition(95);
-        }
-        if (gamepad2.dpad_down){
-            outtakeServo.setPosition(0);
-        }
-        if (gamepad2.dpad_left){
-            capperServo.setPosition(180);
-        }
-        if (gamepad2.dpad_right){
-            capperServo.setPosition(0);
-        }
-
-            // Show the elapsed game time and wheel power.
-            telemetry.addData("Status", "Run Time: " + runtime.toString());
-            telemetry.addData("Motors", "left (%.2f), right (%.2f)", leftPower, rightPower);
-            telemetry.update();
-        }
     }
 }
+

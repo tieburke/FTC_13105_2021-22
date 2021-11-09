@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.robotcontroller.RobotClasses.Misc;
+package org.firstinspires.ftc.teamcode.RobotClasses.Misc;
 /**
  * A class for (x, y) coordinates. Any unit can be used to represent x and y but
  * inches are used in the this projects Odometry classes
