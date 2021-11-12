@@ -6,52 +6,52 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 public class Standard_Bot {
 
-    public static DcMotor StdFrontRight   = null;
-    public static DcMotor StdBackRight  = null;
-    public static DcMotor StdFrontLeft   = null;
-    public static DcMotor StdBackLeft = null;
-    public static DcMotor StdIntakeMotor  = null;
-    public static DcMotor StdCapperMotor = null;
-    public static DcMotor StdCarouselMotor = null;
-    public static DcMotor StdOuttakeMotor = null;
-    public static Servo StdRotateCapperServo = null;
-    public static Servo StdOuttakeServo = null;
+    public DcMotor StdFrontRight   = null;
+    public DcMotor StdBackRight  = null;
+    public DcMotor StdFrontLeft   = null;
+    public DcMotor StdBackLeft = null;
+    public DcMotor StdIntakeMotor  = null;
+    public DcMotor StdCapperMotor = null;
+    public DcMotor StdCarouselMotor = null;
+    public DcMotor StdOuttakeMotor = null;
+    public Servo StdCapperServo = null;
+    public Servo StdOuttakeServo = null;
     //public DistanceSensor       StdDistanceSensor = null;
     //public Rev2mDistanceSensor  StdRevDistanceSensor = null;
 
-    public static final double Capper_Start= 0;
-    public static final double Outtake_Servo= 0;
+    public final double Capper_Start= 0;
+    public final double Outtake_Servo= 0;
 
-    static HardwareMap hwMap =  null;
+    HardwareMap hwMap =  null;
     private ElapsedTime period = new ElapsedTime();
 
     public Standard_Bot(){
 
     }
-    public static void InitHardware(HardwareMap ahwMap) {
+    public void init(HardwareMap ahwMap) {
         // Save reference to Hardware map
         hwMap = ahwMap;
 
         // Define and Initialize Motors
-        StdFrontLeft  = hwMap.get(DcMotor.class, "FrontLeft");
-        StdFrontRight = hwMap.get(DcMotor.class, "RightFront");
-        StdBackLeft = hwMap.get(DcMotor.class, "LeftRear");
-        StdBackRight = hwMap.get(DcMotor.class, "RightRear");
-        StdIntakeMotor = hwMap.get(DcMotor.class, "IntakeMotor");
-        StdCapperMotor = hwMap.get(DcMotor.class, "CapperMotor");
-        StdCarouselMotor = hwMap.get(DcMotor.class, "CarouselMotor");
-        StdOuttakeMotor = hwMap.get(DcMotor.class, "IntakeMotor");
-        StdRotateCapperServo = hwMap.get(Servo.class, "CapperServo");
-        StdOuttakeServo = hwMap.get(Servo.class, "OuttakeServo");
+        StdFrontLeft  = hwMap.get(DcMotor.class, "frontLeft");
+        StdFrontRight = hwMap.get(DcMotor.class, "frontRight");
+        StdBackLeft = hwMap.get(DcMotor.class, "backLeft");
+        StdBackRight = hwMap.get(DcMotor.class, "backRight");
+        StdIntakeMotor = hwMap.get(DcMotor.class, "intakeMotor");
+        StdCapperMotor = hwMap.get(DcMotor.class, "capperMotor");
+        StdCarouselMotor = hwMap.get(DcMotor.class, "carouselMotor");
+        StdOuttakeMotor = hwMap.get(DcMotor.class, "outtakeMotor");
+        StdCapperServo = hwMap.get(Servo.class, "capperServo");
+        StdOuttakeServo = hwMap.get(Servo.class, "outtakeServo");
 
         //StdDistanceSensor = hwMap.get(DistanceSensor.class, "distanceSensor");
         //StdRevDistanceSensor = (Rev2mDistanceSensor)StdDistanceSensor;
 
         StdFrontLeft.setDirection(DcMotor.Direction.FORWARD);
-        StdFrontRight.setDirection(DcMotor.Direction.FORWARD);
+        StdFrontRight.setDirection(DcMotor.Direction.REVERSE);
         StdBackLeft.setDirection(DcMotor.Direction.FORWARD);
         StdBackRight.setDirection(DcMotor.Direction.REVERSE);
-        StdIntakeMotor.setDirection(DcMotor.Direction.REVERSE);
+        StdIntakeMotor.setDirection(DcMotor.Direction.FORWARD);
         StdCapperMotor.setDirection(DcMotor.Direction.FORWARD);
         StdCarouselMotor.setDirection(DcMotor.Direction.REVERSE);
         StdOuttakeMotor.setDirection(DcMotor.Direction.FORWARD);
@@ -65,7 +65,7 @@ public class Standard_Bot {
         StdCarouselMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         StdOuttakeMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
-        StdRotateCapperServo.setPosition(Capper_Start);
+        StdCapperServo.setPosition(Capper_Start);
         StdOuttakeServo.setPosition(Outtake_Servo);
 
         // Set all motors to zero power
